@@ -11,7 +11,7 @@ module.exports = {
         '180': '180%',
       },
       fontFamily: {
-        sans: ['Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['Helvetica Neue Thin', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
     },
   },

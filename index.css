@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply font-sans;
+@font-face {
+  font-family: 'Helvetica Neue Thin';
+  src: url('/ClimaCheck/img/HelveticaNeueThin.otf') format('otf');
+  font-style: normal;
 }
