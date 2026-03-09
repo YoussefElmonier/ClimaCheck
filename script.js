@@ -17,7 +17,6 @@ function getWeather() {
         })
         .catch(error => {
             console.error('Error fetching current weather data:', error);
-            // alert('Error fetching current weather data. Please try again.');
         });
 
     fetch(forecastUrl)
@@ -27,64 +26,71 @@ function getWeather() {
         })
         .catch(error => {
             console.error('Error fetching hourly forecast data:', error);
-            alert('Error fetching hourly forecast data. Please try again.');
         });
 }
 
 function displayWeather(data) {
-    const tempDivInfo = document.getElementById('temp-div');
-    const weatherInfoDiv = document.getElementById('weather-info');
-    const hourlyForecastDiv = document.getElementById('hourly-forecast');
-    weatherInfoDiv.innerHTML = '';
-    hourlyForecastDiv.innerHTML = '';
-    tempDivInfo.innerHTML = '';
+    const cityDisplay = document.getElementById('city-display');
+    const tempDisplay = document.getElementById('temp-display');
+    const descDisplay = document.getElementById('desc-display');
 
     if (data.cod === '404') {
-        weatherInfoDiv.innerHTML = `<p>${data.message}</p>`;
+        cityDisplay.innerHTML = 'City not found';
+        tempDisplay.innerHTML = '--';
+        descDisplay.innerHTML = '';
     } else {
         const cityName = data.name;
         const temperature = Math.round(data.main.temp - 273.15);
         const description = data.weather[0].description;
 
-        const temperatureHTML = `
-            <p>${temperature}°C</p>
-        `;
-        const weatherHtml = `
-            <p>${cityName}</p>
-        `;
-        tempDivInfo.innerHTML = temperatureHTML;
-        weatherInfoDiv.innerHTML = weatherHtml;
-
-        showImage();
+        cityDisplay.textContent = cityName;
+        tempDisplay.innerHTML = `${temperature}<span class="degree-symbol">°</span>`;
+        descDisplay.textContent = description;
     }
 }
 
+function getFontAwesomeIcon(iconCode) {
+    const mapping = {
+        '01d': 'fas fa-sun',
+        '01n': 'fas fa-moon',
+        '02d': 'fas fa-cloud-sun',
+        '02n': 'fas fa-cloud-moon',
+        '03d': 'fas fa-cloud',
+        '03n': 'fas fa-cloud',
+        '04d': 'fas fa-cloud',
+        '04n': 'fas fa-cloud',
+        '09d': 'fas fa-cloud-showers-heavy',
+        '09n': 'fas fa-cloud-showers-heavy',
+        '10d': 'fas fa-cloud-rain',
+        '10n': 'fas fa-cloud-rain',
+        '11d': 'fas fa-bolt',
+        '11n': 'fas fa-bolt',
+        '13d': 'fas fa-snowflake',
+        '13n': 'fas fa-snowflake',
+        '50d': 'fas fa-smog',
+        '50n': 'fas fa-smog'
+    };
+    return mapping[iconCode] || 'fas fa-question';
+}
 
 function displayHourlyForecast(hourlyData) {
     const hourlyForecastDiv = document.getElementById('hourly-forecast');
+    hourlyForecastDiv.innerHTML = '';
 
-    const next24Hours = hourlyData.slice(0, 8);
+    const forecastPoints = hourlyData.slice(0, 6);
 
-    next24Hours.forEach(item => {
-        const dateTime = new Date(item.dt * 1000);
-        const hour = dateTime.getHours();
-        const temperature = Math.round(item.main.temp - 273.15); // Convert to Celsius
+    forecastPoints.forEach(item => {
+        const temperature = Math.round(item.main.temp - 273.15);
         const iconCode = item.weather[0].icon;
-        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+        const faIcon = getFontAwesomeIcon(iconCode);
 
         const hourlyItemHtml = `
-            <div class="hourly-item">
-                <span>${hour}:00</span>
-                <img src="${iconUrl}" alt="Hourly Weather Icon">
-                <span>${temperature}°C</span>
+            <div class="forecast-item">
+                <i class="${faIcon}"></i>
+                <span class="forecast-temp">${temperature}</span>
             </div>
         `;
 
         hourlyForecastDiv.innerHTML += hourlyItemHtml;
     });
-}
-
-function showImage() {
-    // const weatherIcon = document.getElementById('weather-icon');
-    weatherIcon.style.display = 'block'; // Make the image visible once it's loaded
 }
